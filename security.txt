@@ -1,1 +1,2 @@
-Hello GitHub from Termux!
+My name is Anteneh
+I am 3rd year cynersecurity student at Bahir Dar university
