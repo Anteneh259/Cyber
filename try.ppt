@@ -1,0 +1,422 @@
+                          BAHIRDAR UNIVERSITY 
+FACULITY OF COMPUTING
+DEPARTMENT OF CYBER SECURITY
+AVR MICROCONTROLER AND EMBEDDED SYSTEM
+COURSE GROUP  9 ASSIGNMENT
+
+Submited to : Lec
+Submited date: 25/04/2018 Ec
+
+
+
+
+
+
+
+NAME                                                  ID NO
+1.    Abenezer Alene                                   1601029
+2.    Aman Alelign                                        1600896        
+3.    Anteneh Getnet                                   1600971
+4.    Bekalu Simegnew                                1600754
+5.    Biniam Melku                                        160
+6.    Mikias Abayineh                                   1602135
+
+
+
+
+
+
+AVR Microcontroller LCD Alpha_numeric Interfacing Assignment Documentation
+
+
+
+Table of Content
+Content                                                                                                page
+Introduction                                                                                                   2
+Aim and objectives of the project                                                               3  
+  Description of hardware components                                                       3
+Proteus Simulation Description                                                                    5
+LCD Working Principle in Detail                                                                     7
+Software Design and Program Explanation                                                8  
+Applications of the Project                                                                            9
+Advantages of the System                                                                             10
+Detailed Line-by-Line Explanation of the AVR C Code                                
+ (Very Detailed and Expanded)                                                                       10
+Overall Working of the Program                                                                     17 
+Result and Observation                                                                                    19
+Applications and Real-World Relevance                                                      19
+Future Scope of the project                                                                          20
+Conclution                                                                                                       20 
+
+
+1. Introduction
+ Embedded systems are specialized computing systems designed to perform a dedicated function within a larger system. Unlike general-purpose computers, embedded systems are optimized for specific tasks such as monitoring, controlling, or displaying information. They are widely used in daily life applications including washing machines, microwave ovens, traffic control systems, medical devices, and industrial automation.
+At the core of many embedded systems lies a microcontroller, which integrates a processor, memory, and input/output peripherals on a single chip. One popular family of microcontrollers used in academic and industrial projects is the AVR microcontroller family, developed by Atmel (now Microchip Technology). AVR microcontrollers are known for their RISC architecture, ease of programming, low power consumption, and strong community support.
+In embedded applications, displaying information to the user is often essential. For this purpose, Liquid Crystal Display (LCD) modules are commonly used. Among them, the 16x2 alphanumeric LCD is the most popular due to its low cost, simplicity, and ability to display text clearly.
+This assignment presents a very detailed explanation of interfacing an ATmega16 AVR microcontroller with a 16x2 LCD using 8-bit mode, based strictly on the given Proteus simulation and AVR C code. The explanation is written in a descriptive, line-by-line manner suitable for an academic assignment and report submission.
+
+2. Aim and Objectives of the Project
+
+2.1 Aim
+The main aim of this project is to design, simulate, and implement an AVR-based system that displays fixed text messages on a 16x2 LCD using Embedded C programming.
+
+2.2 Objectives
+The objectives of this project are:
+   To study the ATmega16 microcontroller architecture and pin configuration.
+   To understand the working principle of a 16x2 LCD module.
+   To interface an LCD with an AVR microcontroller using 8-bit data mode.
+   To develop an AVR C program for LCD control.
+   To simulate the hardware circuit using Proteus software.
+   To verify correct data and command transmission to the LCD.
+   To display predefined messages clearly on the LCD screen.
+
+3. Description of Hardware Components
+
+3.1 ATmega16 AVR Microcontroller
+
+The ATmega16 is an 8-bit microcontroller based on the AVR RISC architecture. It provides high performance with low power consumption and is suitable for real-time embedded applications.
+
+Important features used in this project:
+
+32 programmable input/output pins
+Four 8-bit I/O ports: PORTA, PORTB, PORTC, PORTD
+Internal clock support
+Easy interfacing with external devices like LCDs
+
+Role in this project:
+The ATmega16 acts as the central control unit. It sends commands and character data to the LCD to control what is displayed on the screen.
+
+
+3.2 16x2 LCD Module
+A 16x2 LCD is an alphanumeric display capable of showing 32 characters at a time. It consists of two rows with sixteen character positions in each row.
+Internal operation:
+The LCD contains an internal controller which processes commands and data received from the microcontroller. Based on these commands, the LCD performs operations such as clearing the display, moving the cursor, or displaying characters.
+
+LCD Pin Description:
+VSS: Ground pin
+VDD: Power supply (+5V)
+VEE: Contrast control input
+RS: Register Select pin
+RW: Read/Write control pin
+
+EN: Enable pin
+D0–D7: Data pins used for data and commands
+In this project, the LCD is used in 8-bit mode, which allows faster data transfer and simpler programming.
+
+3.3 Potentiometer (RV1)
+The potentiometer is connected to the VEE pin of the LCD. Its purpose is to adjust the contrast of the display. By rotating the potentiometer, the darkness of the characters can be increased or decreased.
+
+3.4 Reset Resistor (R1)
+A pull-up resistor is connected to the RESET pin of the ATmega16 microcontroller. This ensures that the microcontroller does not reset unintentionally during normal operation.
+
+4. Proteus Simulation Description
+
+4.1 Simulation Tool
+Proteus Design Suite is used to design and simulate the complete circuit. It allows verification of both hardware and software behavior without using physical components.
+4.2 Circuit Connections
+LCD to ATmega16 connections:
+LCD D0–D7 connected to PORTD (PD0–PD7)
+LCD RS connected to PC0
+LCD RW connected to PC1
+LCD EN connected to PC2
+Power connections:
+LCD VDD connected to +5V
+LCD VSS connected to Ground
+LCD VEE connected to the potentiometer
+
+
+
+
+
+4.3 Overall Simulation 
+
+
+The simulation image clearly shows the ATmega16 connected to the LCD, and the LCD displaying the messages AVR PROJECT and GROUP: 9.
+
+
+
+
+5. LCD Working Principle in Detail
+The LCD operates using two types of registers: the command register and the data register.
+The command register receives instructions such as clear display or cursor movement.
+The data register receives ASCII values of characters to be displayed.
+The control pins RS, RW, and EN determine the operation mode of the LCD. A proper enable pulse is required for every command or data transfer.
+
+
+
+
+6. Software Design and Program Explanation
+6.1 Clock Frequency Definition
+#define F_CPU 1000000UL
+This line defines the microcontroller operating frequency as 1 MHz. It is necessary for accurate timing and delay generation.
+
+
+
+
+6.2 Header Files Used
+
+#include <avr/io.h>
+#include <util/delay.h>
+These header files provide access to hardware registers and delay functions.
+
+6.3 LCD Control Pin Definitions
+#define RW PC1
+#define RS PC0
+These macros map the LCD control signals to specific PORTC pins.
+
+6.4 LCD Command Function Explanation
+This function is responsible for sending commands to the LCD. It sets the LCD to command mode and writes the instruction through PORTD.
+
+6.5 LCD Data Write Function Explanation
+This function sends character data to the LCD. It enables data mode and writes ASCII
+characters to the LCD.
+
+6.6 LCD Initialization Function Explanation
+The initialization function configures the LCD for 8-bit operation, turns on the display, and clears any previous data.
+
+6.7 String Display Function Explanation
+This function displays a complete string on the LCD by sending characters one by one until the null character is encountered.
+6.8 Main Function Explanation
+The main function configures the I/O ports, initializes the LCD, and continuously displays the predefined messages with delays.
+
+
+
+
+7. Applications of the Project
+Educational embedded system projects
+Display units for sensors
+Industrial status display panels
+Digital notice boards
+
+8. Advantages of the System
+Simple hardware design
+Easy to understand programming
+Low power consumption
+Reliable text display
+
+10. Detailed Line-by-Line Explanation of the AVR C Code (Very Detailed and Expanded)
+
+In this section, the complete AVR C program used in the project is explained line by line. This is one of the most important parts of the assignment, as it clearly shows how the software controls the LCD hardware.
+
+10.1 Complete Program Code
+
+#define F_CPU 1000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define EN PC2
+#define RW PC1
+#define RS PC0
+
+void LCD_cmd(unsigned char cmd)
+{
+  PORTC &= ~(1 << RS); // Command mode
+  PORTC &= ~(1 << RW); // Write mode
+  PORTD = cmd;         // Send command
+  PORTC |= (1 << EN);  // Enable pulse
+  _delay_ms(2);
+  PORTC &= ~(1 << EN);
+  _delay_ms(2);
+}
+
+void LCD_write(char data)
+{
+  PORTC |= (1 << RS);  // Data mode
+  PORTC &= ~(1 << RW); // Write mode
+  PORTD = data;        // Send data
+  PORTC |= (1 << EN);  // Enable pulse
+  _delay_ms(2);
+  PORTC &= ~(1 << EN);
+  _delay_ms(2);
+}
+
+void LCD_init()
+{
+  _delay_ms(20);       // Power-on delay
+  LCD_cmd(0x38);       // 8-bit, 2 lines, 5x7 font
+  LCD_cmd(0x0C);       // Display ON, Cursor OFF
+  LCD_cmd(0x06);       // Entry mode
+  LCD_cmd(0x01);       // Clear display
+  _delay_ms(2);
+}
+
+void LCD_string(char *str)
+{
+  while (*str)
+  {
+    LCD_write(*str++);
+  }
+}
+
+int main(void)
+{
+  DDRD = 0xFF; // PORTD as output (LCD data)
+  DDRC = 0xFF; // PORTC as output (LCD control)
+
+  LCD_init();
+
+  while (1)
+  {
+    // Display Name and ID
+    LCD_cmd(0x80);              // First line
+    LCD_string(" AVR PROJECT");
+
+    LCD_cmd(0xC0);              // Second line
+    LCD_string(" GROUP: 9");
+
+    _delay_ms(20000);            // Display for 2 seconds
+
+    // Clear LCD
+    LCD_cmd(0x01);
+    _delay_ms(10000);            // Blank for 1 second
+  }
+}
+
+
+
+
+10.2 Line-by-Line Code Explanation
+1. Clock Frequency Definition
+
+#define F_CPU 1000000UL
+
+This line defines the operating frequency of the microcontroller as 1 MHz. This information is required by the delay library to generate accurate time delays. Without defining F_CPU, delay functions such as _delay_ms() will not work correctly.
+
+
+
+
+2. Header Files Inclusion
+
+#include <avr/io.h>
+
+This header file provides access to all the input/output registers of the AVR microcontroller. It allows the programmer to control ports such as PORTC and PORTD.
+
+#include <util/delay.h>
+This header file provides built-in delay functions such as _delay_ms() and _delay_us(), which are essential for LCD timing requirements.
+
+
+
+
+3. LCD Control Pin Definitions
+
+#define EN PC2
+
+This line assigns pin PC2 of PORTC as the Enable (EN) pin of the LCD.
+
+#define RW PC1
+
+This line assigns pin PC1 of PORTC as the Read/Write (RW) control pin.
+
+#define RS PC0
+
+This line assigns pin PC0 of PORTC as the Register Select (RS) pin.
+These definitions make the program more readable and easier to modify.
+
+
+
+
+4. LCD_cmd() Function
+This function is used to send command instructions to the LCD.
+PORTC &= ~(1 << RS); sets RS = 0, selecting the command register.
+PORTC &= ~(1 << RW); sets RW = 0, enabling write mode.
+PORTD = cmd; places the command byte on the data bus.
+PORTC |= (1 << EN); generates the enable pulse.
+_delay_ms(2); gives the LCD enough time to read the command.
+PORTC &= ~(1 << EN); completes the enable pulse.
+
+This function is essential for LCD initialization and control operations such as clearing the display and cursor positioning.
+
+5. LCD_write() Function
+This function is used to send character data to the LCD.
+PORTC |= (1 << RS); sets RS = 1, selecting the data register.
+PORTC &= ~(1 << RW); enables write mode.
+PORTD = data; places the ASCII value of the character on PORTD.
+Enable pulse is generated to latch the data.
+Each call to this function displays one character on the LCD screen.
+
+6. LCD_init() Function
+This function initializes the LCD and prepares it for operation.
+Initial delay allows LCD power stabilization.
+LCD_cmd(0x38); configures the LCD in 8-bit mode with 2 lines.
+LCD_cmd(0x0C); turns ON the display and turns OFF the cursor.
+LCD_cmd(0x06); sets cursor movement direction.
+LCD_cmd(0x01); clears the display.
+Without proper initialization, the LCD will not respond correctly.
+
+7. LCD_string() Function
+This function displays a complete string on the LCD.
+The function uses a while loop.
+Each character of the string is sent one by one using LCD_write().
+The loop ends when the null character () is encountered.
+This function simplifies displaying words and sentences on the LCD.
+
+8. main() Function
+The main() function is the starting point of the program.
+DDRD = 0xFF; configures PORTD as output for LCD data.
+DDRC = 0xFF; configures PORTC as output for LCD control.
+LCD_init(); initializes the LCD.
+Inside the infinite loop:
+LCD_cmd(0x80); moves the cursor to the first line.
+LCD_string(" AVR PROJECT"); displays the first message.
+LCD_cmd(0xC0); moves the cursor to the second line.
+LCD_string(" GROUP: 9"); displays the second message.
+Delays are used for visibility.
+LCD_cmd(0x01); clears the display before repeating.
+This loop ensures continuous display of the message.
+
+
+11. Overall Working of the Program
+When power is supplied to the system, the ATmega16 microcontroller starts execution from the main() function. The data direction registers configure PORTC and PORTD as output ports. The LCD is then initialized using a sequence of commands that configure its operating mode.
+Once initialized, the microcontroller sends commands to position the cursor and then sends character data to display the messages "AVR PROJECT" and "GROUP: 9". Delays ensure that the messages remain visible for a sufficient amount of time. The display is then cleared, and the process repeats continuously.
+Thus, the program successfully demonstrates how software instructions control hardware components to display information on an LCD.
+
+
+
+11.1 Program Execution Flow in Real Time
+When power is supplied to the circuit, the ATmega16 microcontroller begins execution from the reset vector. Due to the pull-up resistor connected to the RESET pin, the microcontroller enters normal execution mode without unintended resets. The clock source operating at 1 MHz drives all internal operations, including instruction execution and delay timing.
+The program begins by configuring the Data Direction Registers (DDR). PORTD is configured as an output port to carry LCD data bits D0 to D7. PORTC is configured as an output port to control the LCD control signals RS, RW, and EN. This configuration step is extremely important because without setting the DDR registers correctly, the microcontroller would not be able to send signals to the LCD.
+Once the ports are configured, the LCD initialization routine is executed. This routine ensures that the LCD is placed in a known and stable state before data transmission begins. Initialization commands define the data width, number of display lines, cursor behavior, and display state. This step prevents random characters from appearing on the screen.
+After initialization, the program enters an infinite loop. Inside this loop, the microcontroller sends a command to move the LCD cursor to the first line, followed by sending the characters of the string "AVR PROJECT" one by one. Each character is converted into its ASCII value and transmitted to the LCD data register. The LCD controller decodes the ASCII value and displays the corresponding character pattern.
+
+Next, the cursor is moved to the second line, and the string "GROUP: 9" is displayed using the same mechanism. After displaying the text, the program introduces a long delay to allow the user to read the message clearly. The LCD is then cleared, another delay is applied, and the entire process repeats indefinitely.
+
+11.2 Timing Considerations and LCD Synchronization
+LCD modules require precise timing to operate correctly. Commands and data must be applied to the data bus only when the LCD is ready. The enable (EN) signal plays a crucial role in synchronizing data transfer. A high-to-low transition on the EN pin tells the LCD to latch the data present on the data lines.
+Delays inserted after command and data transmission ensure that the LCD has sufficient time to process the instruction. Without these delays, the LCD may miss commands or display corrupted characters. The _delay_ms() function provides this necessary timing control.
+
+
+
+11.3 Why 8-bit Mode Is Used
+The LCD supports both 4-bit and 8-bit communication modes. In this project, the 8-bit mode is selected because it simplifies programming and reduces the complexity of data transmission. In 8-bit mode, a full byte of data is transmitted at once, whereas in 4-bit mode, data must be split into two nibbles, requiring additional control logic.
+Although 8-bit mode uses more I/O pins, it is ideal for educational projects where clarity and simplicity are more important than pin optimization.
+
+12. Result and Observation
+Upon successful simulation in Proteus, the LCD displays:
+First Line: AVR PROJECT
+Second Line: GROUP: 9
+
+
+The text appears clearly with proper alignment and contrast. The display remains stable throughout execution, confirming correct hardware and software integration.
+
+13. Applications and Real-World Relevance
+This LCD interfacing technique is widely used in:
+Digital meters
+Embedded dashboards
+Industrial machine interfaces
+Educational training kits
+Home automation systems
+Understanding this project enables students to build more complex embedded applications involving sensors and communication modules.
+
+
+14. Future Scope of the Project
+The project can be extended in several ways:
+Interfacing sensors such as temperature or gas sensors
+Using 4-bit mode to save I/O pins
+Displaying dynamic sensor data
+Adding keypad input for user interaction
+Implementing real hardware instead of simulation
+
+15. Conclusion 
+This assignment presented an extensive and detailed study of interfacing a 16x2 LCD with an ATmega16 AVR microcontroller using Embedded C programming. From hardware components and circuit simulation to line-by-line software explanation and overall program flow analysis, every aspect of the project was discussed in depth.
+The project successfully demonstrates how microcontrollers interact with peripheral devices using digital I/O ports and control signals. It strengthens the understanding of embedded system fundamentals and prepares students for advanced microcontroller-based system design. This work serves as a strong academic reference and a practical foundation for future embedded projects.
+This project provides a complete and detailed understanding of LCD interfacing with an AVR microcontroller using Embedded C. The Proteus simulation validates the circuit design, while the line-by-line code explanation clarifies how each instruction contributes to the overall system behavior. The project serves as an excellent foundation for learning embedded systems and can be extended to real-time applications such as sensor displays and control panels.
